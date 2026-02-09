@@ -4,15 +4,10 @@
 <meta charset="UTF-8">
 <title>เกมดอกเบี้ยทบต้น</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
 
 <style>
-* {
-    box-sizing: border-box;
-    font-family: 'Kanit', sans-serif;
-}
-
+* { box-sizing: border-box; font-family: 'Kanit', sans-serif; }
 body {
     margin: 0;
     min-height: 100vh;
@@ -22,86 +17,51 @@ body {
     align-items: center;
     padding: 20px;
 }
-
 .app {
-    background: rgba(255,255,255,0.95);
+    background: white;
     width: 100%;
     max-width: 480px;
     border-radius: 24px;
     padding: 24px;
     box-shadow: 0 20px 40px rgba(0,0,0,0.25);
-    animation: fadeIn 0.8s ease;
 }
+h1 { text-align: center; margin: 0; color: #4a148c; }
+.subtitle { text-align: center; font-size: 14px; color: #666; margin-bottom: 15px; }
 
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-h1 {
-    text-align: center;
-    margin: 0;
-    color: #4a148c;
-}
-
-.subtitle {
-    text-align: center;
-    font-size: 14px;
-    color: #666;
-    margin-bottom: 20px;
-}
-
-.status {
-    display: flex;
-    justify-content: space-between;
-    background: #f3e5f5;
-    padding: 10px 15px;
-    border-radius: 14px;
-    font-weight: 600;
-}
-
-.card {
-    background: white;
-    border-radius: 18px;
-    padding: 18px;
-    margin-top: 15px;
-    box-shadow: 0 6px 16px rgba(0,0,0,0.1);
-}
-
-.card p {
-    margin: 6px 0;
-}
-
-input {
+input, button {
     width: 100%;
     padding: 12px;
     margin-top: 10px;
     font-size: 16px;
     border-radius: 12px;
-    border: 1px solid #ccc;
 }
-
+input { border: 1px solid #ccc; }
 button {
-    width: 100%;
-    margin-top: 12px;
-    padding: 12px;
-    font-size: 16px;
     border: none;
-    border-radius: 14px;
     background: linear-gradient(135deg, #ff9800, #ff5722);
     color: white;
     font-weight: 600;
     cursor: pointer;
 }
 
-button:hover {
-    opacity: 0.9;
+.status {
+    display: flex;
+    justify-content: space-between;
+    background: #ede7f6;
+    padding: 10px;
+    border-radius: 14px;
+    margin-top: 10px;
 }
 
-.result {
-    margin-top: 10px;
-    font-weight: 600;
+.card {
+    background: #fafafa;
+    border-radius: 18px;
+    padding: 15px;
+    margin-top: 15px;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.1);
 }
+
+.result { font-weight: 600; margin-top: 10px; }
 
 table {
     width: 100%;
@@ -109,23 +69,18 @@ table {
     margin-top: 10px;
     font-size: 14px;
 }
-
 th, td {
     border: 1px solid #ddd;
     padding: 6px;
     text-align: center;
 }
+th { background: #ede7f6; }
 
-th {
-    background: #ede7f6;
-}
-
-.edu {
-    background: #f9fbe7;
+.leaderboard {
+    background: #fffde7;
     border-radius: 18px;
     padding: 15px;
-    margin-top: 15px;
-    font-size: 14px;
+    margin-top: 20px;
 }
 </style>
 </head>
@@ -134,7 +89,10 @@ th {
 
 <div class="app">
     <h1>💰 เกมดอกเบี้ยทบต้น</h1>
-    <div class="subtitle">Compound Interest Learning Game</div>
+    <div class="subtitle">แข่งขันคำนวณดอกเบี้ยทบต้น</div>
+
+    <!-- ใส่ชื่อ -->
+    <input id="playerName" placeholder="ชื่อผู้เล่น">
 
     <div class="status">
         <div>ด่าน: <span id="level">1</span></div>
@@ -142,31 +100,31 @@ th {
     </div>
 
     <div class="card">
-        <p>💵 เงินต้น: <b><span id="p"></span></b> บาท</p>
-        <p>📈 ดอกเบี้ย: <b><span id="r"></span></b>% ต่อปี</p>
-        <p>⏳ ระยะเวลา: <b><span id="t"></span></b> ปี</p>
+        <p>เงินต้น: <b><span id="p"></span></b> บาท</p>
+        <p>ดอกเบี้ย: <b><span id="r"></span></b>% ต่อปี</p>
+        <p>ระยะเวลา: <b><span id="t"></span></b> ปี</p>
 
-        <input type="number" id="guess" placeholder="กรอกเงินสุดท้ายที่คาดว่าจะได้">
+        <input type="number" id="guess" placeholder="ทายเงินสุดท้าย">
         <button onclick="check()">ส่งคำตอบ</button>
+        <button id="nextBtn" onclick="nextStage()" style="display:none;">ด่านถัดไป ▶️</button>
 
         <div class="result" id="result"></div>
     </div>
 
     <div id="table"></div>
 
-    <div class="edu">
-        <b>📚 สูตรดอกเบี้ยทบต้น</b><br>
-        A = P (1 + r)<sup>t</sup><br><br>
-        P = เงินต้น<br>
-        r = อัตราดอกเบี้ยต่อปี<br>
-        t = จำนวนปี<br>
-        A = เงินรวมสุดท้าย
+    <div class="leaderboard">
+        <h3>🏆 ตารางอันดับ</h3>
+        <table id="leaderboardTable">
+            <tr><th>อันดับ</th><th>ชื่อ</th><th>คะแนน</th></tr>
+        </table>
     </div>
 </div>
 
 <script>
 let level = 1, score = 0;
 let P, r, t, ans;
+let isAnswered = false;
 
 function newStage() {
     P = Math.floor(Math.random() * 9000) + 1000;
@@ -179,12 +137,17 @@ function newStage() {
     document.getElementById("t").textContent = t;
     document.getElementById("level").textContent = level;
     document.getElementById("score").textContent = score;
+
     document.getElementById("guess").value = "";
     document.getElementById("result").innerHTML = "";
     document.getElementById("table").innerHTML = "";
+    document.getElementById("nextBtn").style.display = "none";
+
+    isAnswered = false;
 }
 
 function check() {
+    if (isAnswered) return;
     const g = parseFloat(document.getElementById("guess").value);
     const diff = Math.abs(ans - g);
 
@@ -197,14 +160,21 @@ function check() {
          ได้คะแนน: +${point}`;
 
     showTable();
+    document.getElementById("score").textContent = score;
+    document.getElementById("nextBtn").style.display = "block";
+    isAnswered = true;
+}
+
+function nextStage() {
+    saveScore();
     level++;
-    setTimeout(newStage, 2500);
+    newStage();
 }
 
 function showTable() {
     let money = P;
     let html = `<div class="card"><b>📊 ตารางเงินเพิ่มรายปี</b><table>
-                <tr><th>ปี</th><th>จำนวนเงิน (บาท)</th></tr>`;
+        <tr><th>ปี</th><th>จำนวนเงิน (บาท)</th></tr>`;
     for (let i = 1; i <= t; i++) {
         money *= (1 + r / 100);
         html += `<tr><td>${i}</td><td>${money.toFixed(2)}</td></tr>`;
@@ -213,6 +183,26 @@ function showTable() {
     document.getElementById("table").innerHTML = html;
 }
 
+function saveScore() {
+    const name = document.getElementById("playerName").value || "ไม่ระบุชื่อ";
+    let board = JSON.parse(localStorage.getItem("leaderboard")) || [];
+    board.push({ name, score });
+    board.sort((a, b) => b.score - a.score);
+    board = board.slice(0, 10);
+    localStorage.setItem("leaderboard", JSON.stringify(board));
+    renderLeaderboard();
+}
+
+function renderLeaderboard() {
+    const board = JSON.parse(localStorage.getItem("leaderboard")) || [];
+    const table = document.getElementById("leaderboardTable");
+    table.innerHTML = "<tr><th>อันดับ</th><th>ชื่อ</th><th>คะแนน</th></tr>";
+    board.forEach((p, i) => {
+        table.innerHTML += `<tr><td>${i+1}</td><td>${p.name}</td><td>${p.score}</td></tr>`;
+    });
+}
+
+renderLeaderboard();
 newStage();
 </script>
 
