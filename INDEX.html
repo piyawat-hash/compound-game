@@ -2,51 +2,219 @@
 <html lang="th">
 <head>
 <meta charset="UTF-8">
-<title>เกมดอกเบี้ยทบต้น 💰</title>
+<title>เกมดอกเบี้ยทบต้น</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
+
 <style>
+* {
+    box-sizing: border-box;
+    font-family: 'Kanit', sans-serif;
+}
+
 body {
-    font-family: 'Comic Sans MS', sans-serif;
-    background: linear-gradient(135deg, #a8edea, #fed6e3);
     margin: 0;
-    padding: 10px;
-}
-
-.container {
-    max-width: 420px;
-    background: white;
-    margin: auto;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
     padding: 20px;
-    border-radius: 16px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
 }
 
-h1, h2 {
-    text-align: center;
-}
-
-.box {
-    margin-top: 15px;
-}
-
-input, button {
+.app {
+    background: rgba(255,255,255,0.95);
     width: 100%;
-    padding: 10px;
+    max-width: 480px;
+    border-radius: 24px;
+    padding: 24px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+    animation: fadeIn 0.8s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+h1 {
+    text-align: center;
+    margin: 0;
+    color: #4a148c;
+}
+
+.subtitle {
+    text-align: center;
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+.status {
+    display: flex;
+    justify-content: space-between;
+    background: #f3e5f5;
+    padding: 10px 15px;
+    border-radius: 14px;
+    font-weight: 600;
+}
+
+.card {
+    background: white;
+    border-radius: 18px;
+    padding: 18px;
+    margin-top: 15px;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+}
+
+.card p {
+    margin: 6px 0;
+}
+
+input {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
     font-size: 16px;
-    margin-top: 8px;
+    border-radius: 12px;
+    border: 1px solid #ccc;
 }
 
 button {
-    background: #ff9800;
+    width: 100%;
+    margin-top: 12px;
+    padding: 12px;
+    font-size: 16px;
     border: none;
-    border-radius: 10px;
-    cursor: pointer;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #ff9800, #ff5722);
     color: white;
-    font-weight: bold;
+    font-weight: 600;
+    cursor: pointer;
 }
 
-.score {
+button:hover {
+    opacity: 0.9;
+}
+
+.result {
+    margin-top: 10px;
+    font-weight: 600;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    font-size: 14px;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 6px;
     text-align: center;
-    font-size: 18px;
-    m
+}
+
+th {
+    background: #ede7f6;
+}
+
+.edu {
+    background: #f9fbe7;
+    border-radius: 18px;
+    padding: 15px;
+    margin-top: 15px;
+    font-size: 14px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+    <h1>💰 เกมดอกเบี้ยทบต้น</h1>
+    <div class="subtitle">Compound Interest Learning Game</div>
+
+    <div class="status">
+        <div>ด่าน: <span id="level">1</span></div>
+        <div>คะแนน: <span id="score">0</span></div>
+    </div>
+
+    <div class="card">
+        <p>💵 เงินต้น: <b><span id="p"></span></b> บาท</p>
+        <p>📈 ดอกเบี้ย: <b><span id="r"></span></b>% ต่อปี</p>
+        <p>⏳ ระยะเวลา: <b><span id="t"></span></b> ปี</p>
+
+        <input type="number" id="guess" placeholder="กรอกเงินสุดท้ายที่คาดว่าจะได้">
+        <button onclick="check()">ส่งคำตอบ</button>
+
+        <div class="result" id="result"></div>
+    </div>
+
+    <div id="table"></div>
+
+    <div class="edu">
+        <b>📚 สูตรดอกเบี้ยทบต้น</b><br>
+        A = P (1 + r)<sup>t</sup><br><br>
+        P = เงินต้น<br>
+        r = อัตราดอกเบี้ยต่อปี<br>
+        t = จำนวนปี<br>
+        A = เงินรวมสุดท้าย
+    </div>
+</div>
+
+<script>
+let level = 1, score = 0;
+let P, r, t, ans;
+
+function newStage() {
+    P = Math.floor(Math.random() * 9000) + 1000;
+    r = Math.floor(Math.random() * 6) + 3;
+    t = Math.floor(Math.random() * 6) + 2;
+    ans = P * Math.pow(1 + r / 100, t);
+
+    document.getElementById("p").textContent = P;
+    document.getElementById("r").textContent = r;
+    document.getElementById("t").textContent = t;
+    document.getElementById("level").textContent = level;
+    document.getElementById("score").textContent = score;
+    document.getElementById("guess").value = "";
+    document.getElementById("result").innerHTML = "";
+    document.getElementById("table").innerHTML = "";
+}
+
+function check() {
+    const g = parseFloat(document.getElementById("guess").value);
+    const diff = Math.abs(ans - g);
+
+    let point = diff < 100 ? 10 : diff < 500 ? 5 : diff < 1000 ? 2 : 0;
+    score += point;
+
+    document.getElementById("result").innerHTML =
+        `เงินจริง: ${ans.toFixed(2)} บาท<br>
+         คลาดเคลื่อน: ${diff.toFixed(2)} บาท<br>
+         ได้คะแนน: +${point}`;
+
+    showTable();
+    level++;
+    setTimeout(newStage, 2500);
+}
+
+function showTable() {
+    let money = P;
+    let html = `<div class="card"><b>📊 ตารางเงินเพิ่มรายปี</b><table>
+                <tr><th>ปี</th><th>จำนวนเงิน (บาท)</th></tr>`;
+    for (let i = 1; i <= t; i++) {
+        money *= (1 + r / 100);
+        html += `<tr><td>${i}</td><td>${money.toFixed(2)}</td></tr>`;
+    }
+    html += "</table></div>";
+    document.getElementById("table").innerHTML = html;
+}
+
+newStage();
+</script>
+
+</body>
+</html>
